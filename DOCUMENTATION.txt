@@ -1,0 +1,47 @@
+To use APInject
+
+1) Create class that contains all classes and interfaces to be bound in override of void Load method. This class must inherit after APInjectLoader.
+
+using APInject;
+using MyApp.Services;
+
+namespace MyApp.Common
+{
+    public class APInjectSettings : APInjectLoader
+    {
+        public APInjectSettings() : base()
+        {
+
+        }
+        public override void Load()
+        {
+            CreateClassInstance<AESService, IAESService>();
+            CreateClassInstance<SHAService, ISHAService>();
+        }
+    }
+}
+
+Calling CreateClassInstance<AESService, IAESService>(); fires bound class constructor and stores object instance internally.
+
+2) create instance of APInjectKernel passing object of APInjectSettings
+ e.g. var _kernel = new APInjectKernel(new APInjectSettings());
+this call automatically fires Load() method no need to do it in user's code!
+ 
+3) Passing _kernel as IAPInjectKernel to constructors of variety of classes on may create simple Constructor Dependency Injection of classes included in binding class. 
+
+4) To retrive interface to the object use: _kernel.GetInstance<IDesiredInterface>()
+ var _aesService = _kernel.GetInstance<IAESService>();
+ 
+ Optionally:
+ 
+ User May retrive specified implementation of interface by calling 
+ public I GetInstance<I>(string Descriptor = "", bool allowNullObjects = false)
+ where it is checked if binding was registered with description or 
+ public I GetInstanceOfClass<C, I>(string Descriptor = "", bool allowNullObjects = false) where C : I
+ where as well it is checked if binding was registered with description or additionally user may give specific class name 
+ to do so user may call:
+ public object CreateClassInstance<C, I>(string Descriptor = "", params object[] args) where C : I
+ registering non epmty Descriptor, or call it as in 1) multiple times using different classes which have common interface.
+ 
+If user has to pass arguments to constructors of bound classes use: params object[] args in CreateClassInstance call (just pass them).
+ 
