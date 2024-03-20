@@ -8,7 +8,7 @@ namespace APInject
 {
     public class APKernelSingleton
     {
-        public static APInjectKernel Kernel { get; private set; }
+        public static IAPInjectKernel Kernel { get; private set; }
 
         private static APKernelSingleton _instance;
 
